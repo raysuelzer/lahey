@@ -9,7 +9,7 @@ First, you gotta get this shitcode onto your greasy computer. Run this here comm
 
 
 ```bash
-git clone https://github.com/raysuelzer/lahey.git.
+git clone https://github.com/raysuelzer/lahey.git
 ```
 
 Or if you're a lazy shithawk who can't be bothered to use the command line, you can download the zip by clickin' that green "Code" button, you greasy cheeseburger walrus.
