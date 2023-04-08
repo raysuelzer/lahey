@@ -4,7 +4,7 @@ Well, look who's come crawlin' for help. Fine, let me tell you about this piss j
 
 Now, listen up, because I'm not takin' any responsibility for this bot, and if you want to use it, it's on you, bud. It's a shitstorm comin', and I don't wanna be anywhere near it.
 
-## 1. Clone the shit repository
+## 1. Clone the shitpository
 First, you gotta get this shitcode onto your greasy computer. Run this here command, you shitweasel:
 
 
