@@ -13,7 +13,7 @@ export class OpenAIIntegration {
     this.openai = new OpenAIApi(this.configuration);
   }
 
-  async laheyChat(input: string, instruction: string): Promise<string> {
+  async chat(input: string, instruction: string): Promise<string> {
     return this.openai.createChatCompletion(
       {
         model: "gpt-3.5-turbo",
