@@ -8,6 +8,36 @@ import { KeepAliveServer } from './server';
 dotenv.config();
 
 
+const client = new Client({
+  intents: [
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.Guilds]
+});
+const openAIAPIKey = process.env.OPENAI_API_KEY!;
+
+const openAIClient = new OpenAIIntegration(openAIAPIKey);
+
+client.on('ready', () => {
+  console.log(`Logged in as ${client.user?.tag}!`);
+});
+
+client.on('messageCreate', async (message) => {
+  try {
+    if (message.author.bot) return;
+    // You can customize the trigger phrase or command for your bot
+    if (message.content?.toLowerCase().startsWith('!lahey')) {
+      processCommand(message, LAHEY_INSTRUCTION)
+    }
+
+  } catch (error) {
+    console.error('Error generating text from GPT:', error);
+  }
+});
+
 async function processCommand(message: Message, systemMessage: string) {
   const typing =  new TypingController(message.channel as TextChannel); // Start the typing indicator loop
 
@@ -44,39 +74,9 @@ export class TypingController {
 
   public stopTyping(): void {
     this.isTypingCompleted = true;
+    console.log('Typing completed');
   }
 }
 
-
-const client = new Client({
-  intents: [
-    GatewayIntentBits.MessageContent,
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
-    GatewayIntentBits.GuildMembers,
-    GatewayIntentBits.Guilds]
-});
-const openAIAPIKey = process.env.OPENAI_API_KEY!;
-
-const openAIClient = new OpenAIIntegration(openAIAPIKey);
-
-client.on('ready', () => {
-  console.log(`Logged in as ${client.user?.tag}!`);
-});
-
-client.on('messageCreate', async (message) => {
-  try {
-    if (message.author.bot) return;
-    // You can customize the trigger phrase or command for your bot
-    if (message.content?.toLowerCase().startsWith('!lahey')) {
-      processCommand(message, LAHEY_INSTRUCTION)
-    }
-
-  } catch (error) {
-    console.error('Error generating text from GPT:', error);
-  }
-});
-
-
-const server = new KeepAliveServer().keepAlive();
+new KeepAliveServer().keepAlive();
+client.login(process.env.DISCORD_BOT_TOKEN);
