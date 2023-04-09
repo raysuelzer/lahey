@@ -77,5 +77,5 @@ export class TypingController {
   }
 }
 
-
+setInterval(() => console.log('Pinging to keep alive in azure.'), 30000)
 client.login(process.env.DISCORD_BOT_TOKEN);
