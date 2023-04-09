@@ -29,8 +29,14 @@ client.on('messageCreate', async (message) => {
   try {
     if (message.author.bot) return;
     // You can customize the trigger phrase or command for your bot
-    if (message.content?.toLowerCase().startsWith('!lahey')) {
-      processCommand(message, LAHEY_INSTRUCTION)
+    if (client?.user && message.mentions.has(client.user)) {
+      // Get the ID of the bot user and replace it with lehay
+      const cleanedMessage = message.content.replace(`<@${client.user.id}>`, 'lehay')
+      processMessage(cleanedMessage, message, LAHEY_INSTRUCTION)
+    }
+    else if (message.content?.toLowerCase().startsWith('!lahey')) {
+      const prompt = `${message.content.slice(7)}` || 'I am the liquor';
+      processMessage(prompt, message, LAHEY_INSTRUCTION)
     }
 
   } catch (error) {
@@ -38,14 +44,14 @@ client.on('messageCreate', async (message) => {
   }
 });
 
-async function processCommand(message: Message, systemMessage: string) {
-  const typing =  new TypingController(message.channel as TextChannel); // Start the typing indicator loop
+async function processMessage(cleanedMessage: string, message: Message, aiSystemMessage: string) {
+  const typing = new TypingController(message.channel as TextChannel); // Start the typing indicator loop
 
   try {
     typing.startTyping();
-    const prompt = `${message.content.slice(7)}`;
-    const response = await openAIClient.chat(prompt, systemMessage);
-    message.reply(response).then(() => {;
+
+    const response = await openAIClient.chat(cleanedMessage, aiSystemMessage);
+    message.reply(response).then(() => {
       typing.stopTyping();
     });
   } catch (error) {
@@ -61,20 +67,17 @@ async function processCommand(message: Message, systemMessage: string) {
 export class TypingController {
   constructor(private channel: TextChannel) {
   }
-  private isTypingCompleted = false;
+  private cancelToken: NodeJS.Timer | undefined;
 
   public async startTyping(): Promise<void> {
     // What the shit, this doesn't resolve after ten seconds
     // shit documentation discord.
-    await this.channel.sendTyping().finally(() => {
-      if (this.isTypingCompleted) return;
-      this.startTyping();
-    })
+    await this.channel.sendTyping()
+    this.cancelToken = setInterval(() => this.channel.sendTyping(), 5500)
   }
 
   public stopTyping(): void {
-    this.isTypingCompleted = true;
-    console.log('Typing completed');
+    clearInterval(this.cancelToken);
   }
 }
 
