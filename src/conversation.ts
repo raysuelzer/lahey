@@ -37,6 +37,7 @@ export class OpenAIIntegration {
       {
         model: "gpt-3.5-turbo",
         max_tokens: 1200,
+        temperature: 0.7,
         messages: messages,
       }
     ).then((response) => {
