@@ -4,6 +4,7 @@ import * as dotenv from 'dotenv';
 import { OpenAIIntegration } from './conversation';
 import { LAHEY_INSTRUCTION } from './prompt';
 import { KeepAliveServer } from './server';
+import { ConversationHistory } from './conversation-history';
 
 dotenv.config();
 
@@ -19,7 +20,9 @@ const client = new Client({
 });
 const openAIAPIKey = process.env.OPENAI_API_KEY!;
 
-const openAIClient = new OpenAIIntegration(openAIAPIKey);
+const convoHistory = new ConversationHistory(1050);
+
+const openAIClient = new OpenAIIntegration(openAIAPIKey, convoHistory);
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user?.tag}!`);
@@ -44,13 +47,15 @@ client.on('messageCreate', async (message) => {
   }
 });
 
-async function processMessage(cleanedMessage: string, message: Message, aiSystemMessage: string) {
+async function processMessage(cleanedMessage: string,
+  message: Message, aiSystemMessage: string
+
+  ) {
   const typing = new TypingController(message.channel as TextChannel); // Start the typing indicator loop
 
   try {
     typing.startTyping();
-
-    const response = await openAIClient.chat(cleanedMessage, aiSystemMessage);
+    const response = await openAIClient.chat(cleanedMessage, aiSystemMessage, message.author.id);
     message.reply(response).then(() => {
       typing.stopTyping();
     });
